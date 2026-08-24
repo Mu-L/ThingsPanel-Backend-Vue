@@ -479,7 +479,7 @@ const inputFeedback = computed(() => {
       <n-grid :x-gap="cardMargin" :y-gap="cardMargin" cols="1 600:2 900:3 1200:4">
         <n-gi v-for="(i, index) in telemetryData" :key="i.tenant_id">
           <n-card header-class="border-b h-36px" hoverable :style="{ height: cardHeight + 'px' }">
-            <div class="card-body">
+            <div class="telemetry-card-body">
               <n-tooltip v-if="isColor(i)" trigger="hover" placement="top">
                 <template #trigger>
                   <span class="value-display-ellipsis" style="font-size: 24px">
@@ -769,7 +769,7 @@ const inputFeedback = computed(() => {
   }
 }
 
-.card-body {
+.telemetry-card-body {
   padding: 10px 0 10px;
   display: flex;
   align-items: end;
