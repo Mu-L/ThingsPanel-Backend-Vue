@@ -80,6 +80,7 @@ const emit = defineEmits<{
 
 const container = ref<HTMLElement | null>(null)
 let client: ThingsVisClient | null = null
+let viewerResizeObserver: ResizeObserver | null = null
 
 const getPreviewDeviceId = () => {
   if (typeof props.deviceId === 'string' && props.deviceId.trim()) return props.deviceId
@@ -971,8 +972,7 @@ onMounted(async () => {
         ((window.innerHeight * 0.92) - 170) / canvasHeight
       ))
     : undefined
-  const embedSizing = props.mode === 'viewer' ? '&embedSizing=content' : ''
-  const runtimeParams = `&context=${embeddedContext}&thingsvisApiBaseUrl=${thingsvisApiBaseUrl}&platformApiBaseUrl=${platformApiBaseUrl}${embedSizing}${initialZoom ? `&initialZoom=${initialZoom}` : ''}`
+  const runtimeParams = `&context=${embeddedContext}&thingsvisApiBaseUrl=${thingsvisApiBaseUrl}&platformApiBaseUrl=${platformApiBaseUrl}${initialZoom ? `&initialZoom=${initialZoom}` : ''}`
 
   // 追加 saveTarget=host，告知 Editor 进入宿主托管模式
   const targetUrl =
@@ -989,6 +989,17 @@ onMounted(async () => {
       minHeight: '400px'
     }
   })
+
+  if (props.mode === 'viewer') {
+    const syncViewerHeight = () => {
+      if (!container.value || !client) return
+      const width = container.value.getBoundingClientRect().width
+      client.setFrameHeight((canvasHeight * width) / canvasWidth)
+    }
+    syncViewerHeight()
+    viewerResizeObserver = new ResizeObserver(syncViewerHeight)
+    viewerResizeObserver.observe(container.value)
+  }
 
   // Client Ready 时，发送初始数据
   // NOTE: loadWidgetConfig (tv:init) MUST be called before emit('ready') so that
@@ -1064,6 +1075,8 @@ const pushPlatformData = (fields: Record<string, unknown>, deviceId?: string) =>
 }
 
 onBeforeUnmount(() => {
+  viewerResizeObserver?.disconnect()
+  viewerResizeObserver = null
   window.removeEventListener('message', handlePlatformWrite)
   window.removeEventListener('message', handleFieldDataRequest)
   if (client) {

@@ -83,6 +83,18 @@ export class ThingsVisClient {
     this.setupMessageListener()
   }
 
+  public setFrameHeight(height: number) {
+    if (!Number.isFinite(height) || height <= 0) return
+    const nextHeight = `${Math.ceil(height)}px`
+    if (this.iframe.style.height === nextHeight) return
+    this.iframe.setAttribute('scrolling', 'no')
+    this.iframe.style.overflow = 'hidden'
+    this.iframe.style.height = nextHeight
+    this.container.style.overflow = 'hidden'
+    this.container.style.height = nextHeight
+    this.container.style.minHeight = nextHeight
+  }
+
   private initIframe() {
     // 鑷姩杩藉姞 embedded=1 鍙傛暟锛岀‘淇?Guest 绔繘鍏ュ祵鍏ユā寮?
     const separator = this.options.url.includes('?') ? '&' : '?'
@@ -123,16 +135,6 @@ export class ThingsVisClient {
 
     const { type, payload } = event.data || {}
     if (!type) return
-
-    if (type === 'tv:content-height') {
-      const height = Number(payload?.height)
-      if (Number.isFinite(height) && height > 0) {
-        const nextHeight = `${Math.ceil(height)}px`
-        this.iframe.style.height = nextHeight
-        this.container.style.height = nextHeight
-        this.container.style.minHeight = nextHeight
-      }
-    }
 
     // 鍗忚閫傞厤: 浠呬粎鎺ユ敹鎴戜滑鍏冲績鐨勬秷鎭?
 
