@@ -28,23 +28,6 @@ const cardMargin = ref(15)
 const initialConfig = ref<any>(null)
 const platformFields = ref<PlatformField[]>([])
 const currentData = ref<Record<string, any>>({})
-const viewerHeight = computed(() => {
-  const config = initialConfig.value
-  if (!config) return '400px'
-
-  const canvas = config.canvas || config.canvasConfig || {}
-  const nodes = Array.isArray(config.nodes) ? config.nodes : []
-  const nodeBottom = nodes.reduce((max: number, node: any) => {
-    const y = typeof node?.y === 'number' ? node.y : node?.position?.y
-    const height = typeof node?.height === 'number' ? node.height : node?.size?.height
-    if (typeof y !== 'number' || typeof height !== 'number') return max
-    return Math.max(max, y + height)
-  }, 0)
-
-  const canvasHeight = typeof canvas.height === 'number' ? canvas.height : 0
-  const expandedHeight = Math.max(canvasHeight, nodeBottom + 96, 400)
-  return `${Math.ceil(expandedHeight)}px`
-})
 const viewerPlatformDevices = computed(() => {
   if (!d_id || platformFields.value.length === 0) return []
   return [
@@ -295,7 +278,6 @@ onBeforeUnmount(() => {
         :data="currentData"
         :platform-fields="platformFields"
         :platform-devices="viewerPlatformDevices"
-        :height="viewerHeight"
         :buffer-size="100"
         :device-id="d_id as string"
         @ready="onVisReady"

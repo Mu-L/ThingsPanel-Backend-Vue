@@ -64,7 +64,6 @@ const props = defineProps<{
   /** Optional: device entries forwarded to the ThingsVis editor (enables Device Fields in Field Picker) */
   platformDevices?: any[]
   /** Optional: iframe height */
-  height?: string
   /** Render mode: 'viewer' (read-only preview) | 'editor' (visual editor) */
   mode?: 'viewer' | 'editor'
   /** Optional: current device ID — used to route tv:platform-write back to the platform API */
@@ -972,7 +971,8 @@ onMounted(async () => {
         ((window.innerHeight * 0.92) - 170) / canvasHeight
       ))
     : undefined
-  const runtimeParams = `&context=${embeddedContext}&thingsvisApiBaseUrl=${thingsvisApiBaseUrl}&platformApiBaseUrl=${platformApiBaseUrl}${initialZoom ? `&initialZoom=${initialZoom}` : ''}`
+  const embedSizing = props.mode === 'viewer' ? '&embedSizing=content' : ''
+  const runtimeParams = `&context=${embeddedContext}&thingsvisApiBaseUrl=${thingsvisApiBaseUrl}&platformApiBaseUrl=${platformApiBaseUrl}${embedSizing}${initialZoom ? `&initialZoom=${initialZoom}` : ''}`
 
   // 追加 saveTarget=host，告知 Editor 进入宿主托管模式
   const targetUrl =
@@ -985,7 +985,7 @@ onMounted(async () => {
     mode: 'widget', // 始终是 widget 模式 (数据透传)
     url: targetUrl,
     style: {
-      height: props.height || '100%',
+      height: props.mode === 'viewer' ? '400px' : '100%',
       minHeight: '400px'
     }
   })
