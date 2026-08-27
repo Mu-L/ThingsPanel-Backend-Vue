@@ -74,7 +74,7 @@ function download() {
           </NAlert>
 
           <div class="bindings">
-            <h3>创建看板时需要绑定的设备角色</h3>
+            <h3>创建看板时需要绑定的设备模板</h3>
             <NEmpty v-if="bindings.length === 0" description="该模板无需绑定设备" />
             <NSpace v-else vertical>
               <div v-for="dashboard in bindings" :key="dashboard.dashboardKey" class="binding-card">

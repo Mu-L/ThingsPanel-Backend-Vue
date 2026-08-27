@@ -286,7 +286,7 @@ onMounted(() => {
 
             <div class="template-meta">
               <span>版本 {{ template.version }}</span>
-              <span>{{ template.bindings.length }} 个设备角色</span>
+              <span>{{ template.bindings.length }} 个设备模板</span>
               <span>已创建 {{ template.instanceCount }} 个看板</span>
             </div>
 
@@ -347,7 +347,7 @@ onMounted(() => {
             v-if="compatibleBindings.some(binding => binding.required && binding.devices.length === 0)"
             type="warning"
           >
-            部分必需角色暂无兼容设备。请先基于对应设备模板创建真实设备，再返回创建看板。
+            部分必需设备模板暂无兼容设备。请先基于对应设备模板创建真实设备，再返回创建看板。
           </NAlert>
 
           <div class="binding-list">

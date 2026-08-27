@@ -333,16 +333,16 @@ defineExpose({ open, close } as PublishWizardExpose)
             </NFormItem>
             <NFormItem v-if="roles.length > 0" label="设备依赖">
               <div class="role-list">
-                <div class="dependency-summary">安装时需要绑定 {{ roles.length }} 个设备角色</div>
+                <div class="dependency-summary">安装时需要绑定 {{ roles.length }} 个设备模板</div>
                 <NCard v-for="role in roles" :key="role.sourceDeviceId" size="small">
                   <div class="role-title">
                     <span>{{ referenceForRole(role)?.sourceDeviceName || role.displayName }}</span>
                     <NTag size="small" type="info">必需</NTag>
                   </div>
-                  <NFormItem label="安装角色名称" label-width="100" class="role-form-item">
+                  <NFormItem label="设备模板名称" label-width="100" class="role-form-item">
                     <NInput v-model:value="role.displayName" maxlength="50" />
                   </NFormItem>
-                  <div class="role-key">角色标识：{{ role.bindingKey }}</div>
+                  <div class="role-key">设备模板标识：{{ role.bindingKey }}</div>
                   <NSpace v-if="referenceForRole(role)?.requiredFields.length" size="small" class="field-tags">
                     <NTag
                       v-for="field in referenceForRole(role)?.requiredFields"
@@ -352,7 +352,7 @@ defineExpose({ open, close } as PublishWizardExpose)
                       {{ field.name || field.identifier }}
                     </NTag>
                   </NSpace>
-                  <div v-else class="role-key">该角色未引用具体物模型字段</div>
+                  <div v-else class="role-key">该设备模板未引用具体物模型字段</div>
                 </NCard>
               </div>
             </NFormItem>
@@ -377,13 +377,11 @@ defineExpose({ open, close } as PublishWizardExpose)
       </template>
 
       <template v-else>
-        <NAlert type="success" title="已提交审核" class="mb-4">
-          审核通过后，这份看板模板会出现在资源中心。
-        </NAlert>
+        <NAlert type="success" title="已提交审核" class="mb-4">审核通过后，这份看板模板会出现在资源中心。</NAlert>
         <NDescriptions v-if="result" bordered :column="1">
           <NDescriptionsItem label="模板名称">{{ form.name }}</NDescriptionsItem>
           <NDescriptionsItem label="发布版本">{{ result.version }}</NDescriptionsItem>
-          <NDescriptionsItem label="设备角色">{{ roles.length }} 个</NDescriptionsItem>
+          <NDescriptionsItem label="设备模板">{{ roles.length }} 个</NDescriptionsItem>
           <NDescriptionsItem label="当前状态">等待审核</NDescriptionsItem>
         </NDescriptions>
         <div class="step-actions end">
