@@ -1331,9 +1331,8 @@ function sanitizeDataSourcesForHostSave(nodes: unknown, dataSources: unknown): u
       return referencedIds.has(id)
     })
     .map((dataSource: any) => {
-      if (!dataSource?.__editorAutoManual) return dataSource
-      const { __editorAutoManual: _editorAutoManual, mode: _mode, ...rest } = dataSource
-      return rest
+      const { __editorAutoManual: _editorMetadata, ...persistedDataSource } = dataSource
+      return persistedDataSource
     })
 }
 
