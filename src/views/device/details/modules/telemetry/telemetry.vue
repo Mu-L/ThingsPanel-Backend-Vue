@@ -361,7 +361,7 @@ const handlePositiveClick = async () => {
 }
 
 const onTapTableTools = (i: any) => {
-  if (typeof i.value === 'number') {
+  if (typeof i.value === 'number' && !isEnumTelemetry(i)) {
     modelType.value = $t('custom.device_details.sequential')
     telemetryKey.value = i.key
     telemetryName.value = i.label
@@ -371,8 +371,32 @@ const onTapTableTools = (i: any) => {
   }
 }
 
+const isEnumTelemetry = (item: DeviceManagement.telemetryData) =>
+  item.data_type?.toLowerCase() === 'enum' && Array.isArray(item.enum)
+
+const isEnumValueMatched = (enumItem: DeviceManagement.telemetryEnumItem, value: unknown) => {
+  switch (enumItem.value_type?.toLowerCase()) {
+    case 'number':
+      return Number(enumItem.value) === Number(value)
+    case 'boolean':
+      return String(enumItem.value).toLowerCase() === String(value).toLowerCase()
+    default:
+      return String(enumItem.value) === String(value)
+  }
+}
+
+const getTelemetryDisplayValue = (item: DeviceManagement.telemetryData) => {
+  if (!isEnumTelemetry(item)) return item.value
+
+  const matchedItem = item.enum?.find(enumItem => isEnumValueMatched(enumItem, item.value))
+  return matchedItem?.description || item.value
+}
+
+const isTextTelemetry = (item: DeviceManagement.telemetryData) =>
+  isEnumTelemetry(item) || typeof item.value !== 'number'
+
 const isColor = (i: any) => {
-  if (typeof i.value !== 'number') {
+  if (typeof i.value !== 'number' || isEnumTelemetry(i)) {
     return '#cccccc'
   }
   return ''
@@ -480,13 +504,16 @@ const inputFeedback = computed(() => {
         <n-gi v-for="(i, index) in telemetryData" :key="i.tenant_id">
           <n-card header-class="border-b h-36px" hoverable :style="{ height: cardHeight + 'px' }">
             <div class="telemetry-card-body">
-              <n-tooltip v-if="isColor(i)" trigger="hover" placement="top">
+              <n-tooltip v-if="isTextTelemetry(i)" trigger="hover" placement="top">
                 <template #trigger>
                   <span class="value-display-ellipsis" style="font-size: 24px">
-                    {{ i.value }}
+                    {{ getTelemetryDisplayValue(i) }}
                   </span>
                 </template>
-                <div style="max-width: 300px; word-break: break-all">{{ i.value }}</div>
+                <div style="max-width: 300px; word-break: break-all">
+                  {{ getTelemetryDisplayValue(i) }}
+                  <template v-if="isEnumTelemetry(i)">（{{ i.value }}）</template>
+                </div>
               </n-tooltip>
               <MovingNumbers
                 v-else

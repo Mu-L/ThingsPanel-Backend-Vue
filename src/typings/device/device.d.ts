@@ -88,15 +88,23 @@ declare namespace DeviceManagement {
     is_online: number // 是否在线
   }
 
+  interface telemetryEnumItem {
+    value_type: string
+    value: number | string | boolean
+    description: string
+  }
+
   interface telemetryData {
     device_id: string
     key: string
     tenant_id: string
     ts: string
-    value: number
+    value: number | string | boolean | Record<string, unknown> | null
     unit: string
     label: string
     name: string
+    data_type?: string
+    enum?: telemetryEnumItem[]
   }
 
   interface telemetryCurrent {
